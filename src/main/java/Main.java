@@ -60,7 +60,7 @@ public class Main {
         Headers responseHeaders = exchange.getResponseHeaders();
         responseHeaders.add("Content-Type", "application/json");
         responseHeaders.add("Access-Control-Allow-Origin", "*");
-        exchange.sendResponseHeaders(rCode, text.length());
+        exchange.sendResponseHeaders(rCode, text.getBytes().length);
         exchange.getResponseBody().write(text.getBytes());
         exchange.getResponseBody().close();
     }

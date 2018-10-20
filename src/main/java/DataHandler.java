@@ -15,7 +15,7 @@ public class DataHandler {
 
     static JSONObject queryToEntity(String query, String lang) {
         try {
-            Scanner scanner = new Scanner(new URL("https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&search=" + query + "&language=" + lang).openStream());
+            Scanner scanner = new Scanner(new URL("https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&uselang=" + lang + "&search=" + query + "&language=" + lang).openStream());
             StringBuilder stringBuilder = new StringBuilder();
             while (scanner.hasNextLine()) {
                 stringBuilder.append(scanner.nextLine());
