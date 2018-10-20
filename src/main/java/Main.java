@@ -21,6 +21,13 @@ public class Main {
         }
     }
 
+	public static void main(String[] args) {
+		Log.status("starting	http-server");
+		new Main();
+		Log.success("started		http-server");
+		
+	}
+	
     private class GetDataHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
@@ -39,10 +46,7 @@ public class Main {
         }
         return result;
     }
-
-    public static void main(String[] args) {
-        new Main();
-    }
+    
 
 
     void write(String text, int rCode, HttpExchange exchange) throws IOException {
