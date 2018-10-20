@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Objects;
 
 public class Main {
     private Main() {
@@ -14,7 +15,6 @@ public class Main {
             HttpServer httpServer = HttpServer.create(new InetSocketAddress(2000), 0);
 
             httpServer.createContext("/search", new searchHandler());
-            httpServer.createContext("/getDetails", new GetDetailsHandler());
 
             httpServer.start();
         } catch (IOException e) {
@@ -38,12 +38,6 @@ public class Main {
         }
     }
 
-    private class GetDetailsHandler implements HttpHandler {
-        @Override
-        public void handle(HttpExchange exchange) throws IOException {
-            HashMap<String, String> query = queryToMap(exchange.getRequestURI().getQuery());
-        }
-    }
 
     private HashMap<String, String> queryToMap(String query) {
         LinkedHashMap<String, String> result = new LinkedHashMap<>();
@@ -56,15 +50,13 @@ public class Main {
     }
 
 
-    void write(String text, int rCode, HttpExchange exchange) throws IOException {
+    private void write(String text, int rCode, HttpExchange exchange) throws IOException {
         Headers responseHeaders = exchange.getResponseHeaders();
         responseHeaders.add("Content-Type", "application/json");
         responseHeaders.add("Access-Control-Allow-Origin", "*");
-        exchange.sendResponseHeaders(rCode, text.length());
+        exchange.sendResponseHeaders(rCode, text.getBytes().length);
         exchange.getResponseBody().write(text.getBytes());
         exchange.getResponseBody().close();
     }
-
-
 }
 
