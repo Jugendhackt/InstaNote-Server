@@ -13,7 +13,8 @@ public class Main {
         try {
             HttpServer httpServer = HttpServer.create(new InetSocketAddress(2000), 0);
 
-            httpServer.createContext("/getData", new GetDataHandler());
+            httpServer.createContext("/search", new searchHandler());
+            httpServer.createContext("/getDetails", new GetDetailsHandler());
 
             httpServer.start();
         } catch (IOException e) {
@@ -21,38 +22,44 @@ public class Main {
         }
     }
 
-	public static void main(String[] args) {
-		Log.status("starting	http-server");
-		new Main();
-		Log.success("started		http-server");
-	}
-	
-    private class GetDataHandler implements HttpHandler {
+    public static void main(String[] args) {
+        Log.status("starting	http-server");
+        new Main();
+        Log.success("started		http-server");
+    }
+
+    private class searchHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             HashMap<String, String> query = queryToMap(exchange.getRequestURI().getQuery());
 
-            write(DataHandler.queryToEntity(query.get("searchWord"), query.get("lang")).toString(), 200, exchange);
+            write(DataHandler.queryToEntity(query.get("searchword"), query.get("lang")).toString(), 200, exchange);
 
+        }
+    }
+
+    private class GetDetailsHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            HashMap<String, String> query = queryToMap(exchange.getRequestURI().getQuery());
         }
     }
 
     private HashMap<String, String> queryToMap(String query) {
         LinkedHashMap<String, String> result = new LinkedHashMap<>();
 
-        for(String arg : query.split("&")){
+        for (String arg : query.split("&")) {
             String[] keyAndValue = arg.split("=");
             result.put(keyAndValue[0], keyAndValue[1]);
         }
         return result;
     }
-    
 
 
     void write(String text, int rCode, HttpExchange exchange) throws IOException {
         Headers responseHeaders = exchange.getResponseHeaders();
         responseHeaders.add("Content-Type", "application/json");
-
+        responseHeaders.add("Access-Control-Allow-Origin", "*");
         exchange.sendResponseHeaders(rCode, text.length());
         exchange.getResponseBody().write(text.getBytes());
         exchange.getResponseBody().close();
