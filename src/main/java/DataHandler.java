@@ -8,6 +8,9 @@ import java.net.URLEncoder;
 import java.util.Scanner;
 
 class DataHandler {
+    public static void main(String[] args) {
+        System.out.println(convertJSON(queryCall("Berlin", "de")));
+    }
 
     /**
      * @param query keyword for the wikidata query
@@ -74,9 +77,10 @@ class DataHandler {
         return null;
     }
 
-    static JSONObject convertJSON(JSONObject WikiData) {
-        JSONObject results = (JSONObject) WikiData.get("results");
-        JSONArray bindings = (JSONArray) results.get("bindings");
+    static JSONObject convertJSON(JSONObject wikiData) {
+        JSONObject sparql = wikiData.getJSONObject("sparql");
+        JSONObject results = (JSONObject) sparql.get("results");
+        JSONArray bindings = (JSONArray) results.get("binding");
         JSONObject newResultSet = (JSONObject) bindings.get(0);
 
 
@@ -89,9 +93,9 @@ class DataHandler {
             newResultSet.put(key, value);
         }
 
-        WikiData.remove("results");
-        WikiData.put("results", newResultSet);
+        wikiData.remove("results");
+        wikiData.put("results", newResultSet);
 
-        return WikiData;
+        return wikiData;
     }
 }
