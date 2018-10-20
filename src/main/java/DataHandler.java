@@ -67,8 +67,7 @@ class DataHandler {
             String s = stringBuilder.toString();
             return XML.toJSONObject(s);
 
-            //Return the data as a JSONObject
-            return new JSONObject(stringBuilder.toString());
+
         } catch (IOException e) {
             e.printStackTrace();
         }
