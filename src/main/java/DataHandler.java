@@ -2,6 +2,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Scanner;
 
 class DataHandler {
@@ -28,15 +29,22 @@ class DataHandler {
 
     static JSONObject queryCall(String query, String lang){
         String entityId = queryToEntity(query, lang);
+        String queryAufruf = "SELECT ?Name ?EinwohnerZahl ?Landeswappen ?Karte ?Bild ?Koordinaten ?Flagge WHERE {" +
+                "  wd:" + entityId + " wdt:P1448 ?Name." +
+                "  OPTIONAL {wd:" + entityId + " wdt:P1082 ?EinwohnerZahl.}" +
+                "  OPTIONAL {wd:" + entityId + " wdt:P94 ?Landeswappen.}" +
+                "  OPTIONAL {wd:" + entityId + " wdt:P242 ?Karte.}" +
+                "  OPTIONAL {wd:" + entityId + " wdt:P18 ?Bild. }             " +
+                "  OPTIONAL {wd:" + entityId + " wdt:P625 ?Koordinaten.}" +
+                "  OPTIONAL {wd:" + entityId + " wdt:P41 ?Flagge.}" +
+                "" +
+                "SERVICE wikibase:label { bd:serviceParam wikibase:language \"[AUTO_LANGUAGE],en\". }" +
+                "}" +
+                "";
         try {
-            Scanner scanner = new Scanner(new URL("https://query.wikidata.org/sparql?query=SELECT%20%3FName%20%3FEinwohnerZahl%20%3FLandeswappen%20%3FKarte%20%3FBild%20%3FKoordinaten%20%3FFlagge%20WHERE%20%7B%0A%20%20wd%3A"+
-                    entityId+"%20wdt%3AP1448%20%3FName.%0A%20%20OPTIONAL%20%7Bwd%3A"+
-                    entityId+"%20wdt%3AP1082%20%3FEinwohnerZahl.%7D%0A%20%20OPTIONAL%20%7Bwd%3A"+
-                    entityId+"%20wdt%3AP94%20%3FLandeswappen.%7D%0A%20%20OPTIONAL%20%7Bwd%3A"+
-                    entityId+"%20wdt%3AP242%20%3FKarte.%7D%0A%20%20OPTIONAL%20%7Bwd%3A"+
-                    entityId+"%20wdt%3AP18%20%3FBild.%20%7D%20%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20OPTIONAL%20%7Bwd%3A"+
-                    entityId+"%20wdt%3AP625%20%3FKoordinaten.%7D%0A%20%20OPTIONAL%20%7Bwd%3A"+
-                    entityId+"%20wdt%3AP41%20%3FFlagge.%7D%0A%0ASERVICE%20wikibase%3Alabel%20%7B%20bd%3AserviceParam%20wikibase%3Alanguage%20%22%5BAUTO_LANGUAGE%5D%2Cen%22.%20%7D%0A%7D%0ALimit%201%0A&format=json").openStream());
+            String queryAufrufEncoded = URLEncoder.encode(queryAufruf, "UTF-8");
+
+            Scanner scanner = new Scanner(new URL(queryAufrufEncoded).openStream());
 
             StringBuilder stringBuilder = new StringBuilder();
             while (scanner.hasNextLine()) {
