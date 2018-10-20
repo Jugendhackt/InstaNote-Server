@@ -7,6 +7,11 @@ import java.util.Scanner;
 
 class DataHandler {
 
+    /**
+     * @param query keyword for the wikidata query
+     * @param lang  language for wikidata dump
+     * @return entityID
+     */
     private static String queryToEntity(String query, String lang) {
         try {
             //Get the data from the wikidata api using a search word and a language
@@ -28,6 +33,7 @@ class DataHandler {
     }
 
     static JSONObject queryCall(String query, String lang){
+        //Get the entities id based on a query
         String entityId = queryToEntity(query, lang);
         String queryAufruf = "SELECT ?Name ?EinwohnerZahl ?Landeswappen ?Karte ?Bild ?Koordinaten ?Flagge WHERE {" +
                 "  wd:" + entityId + " wdt:P1448 ?Name." +
@@ -46,6 +52,7 @@ class DataHandler {
 
             Scanner scanner = new Scanner(new URL(queryAufrufEncoded).openStream());
 
+            //Get all the data to be stored in a StringBuilder
             StringBuilder stringBuilder = new StringBuilder();
             while (scanner.hasNextLine()) {
                 stringBuilder.append(scanner.nextLine());
@@ -53,6 +60,8 @@ class DataHandler {
             scanner.close();
             JSONObject jsonObject = new JSONObject(stringBuilder.toString());
 
+            //Return the data as a JSONObject
+            return new JSONObject(stringBuilder.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
