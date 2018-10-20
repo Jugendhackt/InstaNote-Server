@@ -48,7 +48,7 @@ class DataHandler {
                 "  OPTIONAL { wd:"+entityId+" wdt:P41 ?Flagge. }" +
                 "  OPTIONAL { wd:"+entityId+" schema:description ?description." +
                 "           FILTER(LANG(?description)=\"de\")}" +
-                "  SERVICE wikibase:label { bd:serviceParam wikibase:language \"[AUTO_LANGUAGE],en\". }\n" +
+                "  SERVICE wikibase:label { bd:serviceParam wikibase:language \"" + lang + "\". }" +
                 "}";
         try {
             //Encode the query to be used in an url
@@ -75,23 +75,28 @@ class DataHandler {
     }
 
     static JSONObject convertJSON(JSONObject WikiData) {
-        JSONObject results = (JSONObject) WikiData.get("results");
-        JSONArray bindings = (JSONArray) results.get("bindings");
-        JSONObject newResultSet = (JSONObject) bindings.get(0);
+        JSONArray results = WikiData.getJSONObject("sparql").getJSONObject("results").getJSONObject("result").getJSONArray("binding");
+        JSONObject resultsObject = new JSONObject();
 
+        for (int i = 0; i < results.length(); i++) {
+            JSONObject jsonObject = results.getJSONObject(i);
 
-        for (String key : newResultSet.toMap().keySet()) {
-            JSONObject item = newResultSet.getJSONObject(key);
-            String value = item.getString("value");
-
-
-            newResultSet.remove(key);
-            newResultSet.put(key, value);
+            String key = jsonObject.getString("name");
+            String value;
+            if(jsonObject.has("literal")){
+                value = String.valueOf(jsonObject.getJSONObject("literal").get("content"));
+            }else{
+                value = jsonObject.getString("uri");
+            }
+            resultsObject.put(key, value);
         }
 
-        WikiData.remove("results");
-        WikiData.put("results", newResultSet);
 
-        return WikiData;
+        JSONObject returnObject = new JSONObject();
+        returnObject.put("head", WikiData.getJSONObject("sparql").getJSONObject("head").getJSONArray("variable"));
+        returnObject.put("results", resultsObject);
+
+
+        return returnObject;
     }
 }

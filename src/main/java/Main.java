@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 public class Main {
     private Main() {
         try {
+
             HttpServer httpServer = HttpServer.create(new InetSocketAddress(2000), 0);
 
             httpServer.createContext("/search", new searchHandler());
@@ -32,8 +33,8 @@ public class Main {
         public void handle(HttpExchange exchange) throws IOException {
             HashMap<String, String> query = queryToMap(exchange.getRequestURI().getQuery());
 
-            Log.success("Received a request for a search");
-            write(DataHandler.queryCall(query.get("searchword"), query.get("lang")).toString(), 200, exchange);
+            Log.status("Received a request for a search");
+            write(DataHandler.convertJSON(DataHandler.queryCall(query.get("searchword"), query.get("lang"))).toString(), 200, exchange);
 
         }
     }
