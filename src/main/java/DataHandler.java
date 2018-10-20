@@ -8,6 +8,9 @@ import java.net.URLEncoder;
 import java.util.Scanner;
 
 class DataHandler {
+	public static void main(String[] args) {
+		Log.success(convertWikiData(queryCall("Berlin", "de")).toString());
+	}
 
     /**
      * @param query keyword for the wikidata query
@@ -74,8 +77,9 @@ class DataHandler {
         return null;
     }
 
-    static JSONObject convertJSON(JSONObject WikiData) {
-        JSONArray results = WikiData.getJSONObject("sparql").getJSONObject("results").getJSONObject("result").getJSONArray("binding");
+    static JSONObject convertWikiData(JSONObject wikiData) {
+    	Log.status("formatting WikiData-JSON to something more useful");
+        JSONArray results = wikiData.getJSONObject("sparql").getJSONObject("results").getJSONObject("result").getJSONArray("binding");
         JSONObject resultsObject = new JSONObject();
 
         for (int i = 0; i < results.length(); i++) {
@@ -83,21 +87,21 @@ class DataHandler {
 
             String key = jsonObject.getString("name");
             String value;
-            if(jsonObject.has("literal")){
+            
+            if(jsonObject.has("literal")) {
                 value = String.valueOf(jsonObject.getJSONObject("literal").get("content"));
-            }else{
+            } else {
                 value = jsonObject.getString("uri");
             }
+            
             resultsObject.put(key, value);
+            Log.status("added "+key);
         }
 
-
-        JSONObject returnObject = new JSONObject();
-        returnObject.put("head", WikiData.getJSONObject("sparql").getJSONObject("head").getJSONArray("variable"));
-        returnObject.put("results", resultsObject);
-
-
-
-        return returnObject;
+        JSONObject newWikiDataset = new JSONObject();
+        newWikiDataset.put("head", wikiData.getJSONObject("sparql").getJSONObject("head").getJSONArray("variable"));
+        newWikiDataset.put("results", resultsObject);
+				Log.success("formatting succesfull");
+        return newWikiDataset;
     }
 }
