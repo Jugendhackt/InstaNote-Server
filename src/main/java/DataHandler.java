@@ -8,9 +8,15 @@ import java.util.Scanner;
 public class DataHandler {
     public static void main(String[] args) {
         System.out.println(queryToEntity("Hamburg", "en"));
+        System.out.println(getEntityID("Hamburg", "de"));
     }
     static JSONObject wikiData() {
         return null;
+    }
+    
+    static String getEntityID(String query, String lang) {
+        JSONObject jsonObject = (JSONObject) queryToEntity(query, lang).get("result");
+        return jsonObject.get("entityId").toString();
     }
 
     static JSONObject queryToEntity(String query, String lang) {
