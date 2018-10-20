@@ -8,9 +8,6 @@ import java.net.URLEncoder;
 import java.util.Scanner;
 
 class DataHandler {
-    public static void main(String[] args) {
-        System.out.println(convertJSON(queryCall("Berlin", "de")));
-    }
 
     /**
      * @param query keyword for the wikidata query
@@ -37,7 +34,7 @@ class DataHandler {
         }
         return null;
     }
-
+    
     static JSONObject queryCall(String query, String lang){
         //Get the entities id based on a query
         String entityId = queryToEntity(query, lang);
@@ -77,9 +74,6 @@ class DataHandler {
         return null;
     }
     
-    private static JSONObject convert_the_JSON_to_SOMETHING_FUCKING_USEFUL(JSONObject wikiData) {
-        return null;
-    }
 
     @Deprecated
     static JSONObject convertJSON(JSONObject wikiData) {
@@ -102,5 +96,41 @@ class DataHandler {
         wikiData.put("results", newResultSet);
 
         return wikiData;
+    }
+    
+    @Deprecated
+    private static JSONObject convert_the_JSON_to_SOMETHING_FUCKING_USEFUL(JSONObject wikiData) {
+        JSONArray oldHead = wikiData.getJSONObject("sparql").getJSONObject("head").getJSONArray("variable");
+        JSONArray newHead= new JSONArray();
+        
+        for (int i = 0; i < oldHead.length(); i++) {
+            String variable = oldHead.get(i).toString();
+            oldHead.remove(i);
+            newHead.put(variable);
+            Log.status("added "+variable+" to head");
+        }
+        wikiData.put("head", newHead);
+        Log.status(newHead.toString());
+        Log.success("Head completed");
+        
+        JSONArray results = wikiData.getJSONObject("sparql").getJSONObject("results").getJSONObject("result").getJSONArray("binding");
+        for (int i = 0; i < results.length(); i++) {
+            JSONObject item = (JSONObject) results.get(i);
+            String variable = item.get("name").toString();
+            
+            
+            
+            if (item.has("literal")) {
+                JSONObject literalItem = item.getJSONObject("literal");
+                if (literalItem.has("content")) {
+                    literalItem.getString("content");
+                } else if (literalItem.has("uri")) {
+                
+                }
+                
+            }
+            
+        }
+        return null;
     }
 }
