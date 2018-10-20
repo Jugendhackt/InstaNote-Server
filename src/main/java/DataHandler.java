@@ -45,6 +45,7 @@ class DataHandler {
             scanner.close();
             JSONObject jsonObject = new JSONObject(stringBuilder.toString());
 
+            return jsonObject;
         } catch (IOException e) {
             e.printStackTrace();
         }
