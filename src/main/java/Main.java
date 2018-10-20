@@ -33,7 +33,7 @@ public class Main {
             HashMap<String, String> query = queryToMap(exchange.getRequestURI().getQuery());
 
             Log.status("Received a request for a search");
-            write(DataHandler.convertWikiData(DataHandler.queryCall(query.get("searchword"), query.get("lang"))).toString(), 200, exchange);
+            write(DataHandler.convertWikiData(DataHandler.queryCall(query.get("key"), query.get("lang"))).toString(), 200, exchange);
         }
     }
 
