@@ -25,15 +25,12 @@ public class Main {
 		Log.status("starting	http-server");
 		new Main();
 		Log.success("started		http-server");
-		
 	}
 	
     private class GetDataHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             HashMap<String, String> query = queryToMap(exchange.getRequestURI().getQuery());
-
-
         }
     }
 
