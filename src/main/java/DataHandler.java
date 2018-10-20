@@ -8,18 +8,12 @@ import java.util.Scanner;
 public class DataHandler {
     public static void main(String[] args) {
         System.out.println(queryToEntity("Hamburg", "en"));
-        System.out.println(getEntityID("Hamburg", "de"));
     }
     static JSONObject wikiData() {
         return null;
     }
-    
-    static String getEntityID(String query, String lang) {
-        JSONObject jsonObject = (JSONObject) queryToEntity(query, lang).get("result");
-        return jsonObject.get("entityId").toString();
-    }
 
-    static JSONObject queryToEntity(String query, String lang) {
+    static String queryToEntity(String query, String lang) {
         try {
             Scanner scanner = new Scanner(new URL("https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&search=" + query + "&language=" + lang).openStream());
             StringBuilder stringBuilder = new StringBuilder();
@@ -42,7 +36,9 @@ public class DataHandler {
 
             JSONObject resultobject = new JSONObject();
             resultobject.put("result", object);
-            return resultobject;
+            
+            
+            return object.get("entityId").toString();
 
         } catch (IOException e) {
             e.printStackTrace();
