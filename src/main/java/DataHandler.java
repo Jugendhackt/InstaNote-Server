@@ -5,7 +5,12 @@ import java.net.URL;
 import java.util.Scanner;
 
 class DataHandler {
-
+    
+    /**
+     * @param query keyword for the wikidata query
+     * @param lang  language for wikidata dump
+     * @return entityID
+     */
     private static String queryToEntity(String query, String lang) {
         try {
             //Get the data from the wikidata api using a search word and a language
