@@ -33,7 +33,7 @@ public class Main {
         public void handle(HttpExchange exchange) throws IOException {
             HashMap<String, String> query = queryToMap(exchange.getRequestURI().getQuery());
 
-            write(DataHandler.queryToEntity(query.get("searchword"), query.get("lang")).toString(), 200, exchange);
+            write(DataHandler.queryCall(query.get("searchword"), query.get("lang")).toString(), 200, exchange);
 
         }
     }
