@@ -75,7 +75,13 @@ class DataHandler {
     }
 
     static JSONObject convertJSON(JSONObject WikiData) {
-        JSONArray results = WikiData.getJSONObject("sparql").getJSONObject("results").getJSONObject("result").getJSONArray("binding");
+        JSONObject result = WikiData.getJSONObject("sparql").getJSONObject("results");
+        JSONObject resultObject = result.optJSONObject("result");
+        if(resultObject == null){
+            resultObject = result.getJSONArray("result").getJSONObject(0);
+        }
+        JSONArray results = resultObject.getJSONArray("binding");
+
         JSONObject resultsObject = new JSONObject();
 
         for (int i = 0; i < results.length(); i++) {
