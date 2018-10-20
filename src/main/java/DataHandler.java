@@ -8,6 +8,7 @@ import java.util.Scanner;
 public class DataHandler {
     public static void main(String[] args) {
         System.out.println(queryCall("Hamburg", "en"));
+        System.out.println(args);
     }
     static JSONObject wikiData() {
         return null;
