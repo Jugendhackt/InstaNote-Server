@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 class DataHandler {
 
-    static String queryToEntity(String query, String lang) {
+    private static String queryToEntity(String query, String lang) {
         try {
             //Get the data from the wikidata api using a search word and a language
             Scanner scanner = new Scanner(new URL("https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&uselang=" + lang + "&search=" + query + "&language=" + lang).openStream());
@@ -26,7 +26,7 @@ class DataHandler {
         return null;
     }
 
-    public static JSONObject queryCall(String query, String lang){
+    static JSONObject queryCall(String query, String lang){
         String entityId = queryToEntity(query, lang);
         try {
             Scanner scanner = new Scanner(new URL("https://query.wikidata.org/sparql?query=SELECT%20%3FName%20%3FEinwohnerZahl%20%3FLandeswappen%20%3FKarte%20%3FBild%20%3FKoordinaten%20%3FFlagge%20WHERE%20%7B%0A%20%20wd%3A"+
