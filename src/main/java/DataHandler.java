@@ -48,7 +48,7 @@ class DataHandler {
                 "  OPTIONAL { wd:"+entityId+" wdt:P41 ?Flagge. }" +
                 "  OPTIONAL { wd:"+entityId+" schema:description ?description." +
                 "           FILTER(LANG(?description)=\"de\")}" +
-                "  SERVICE wikibase:label { bd:serviceParam wikibase:language \"[AUTO_LANGUAGE],en\". }\n" +
+                "  SERVICE wikibase:label { bd:serviceParam wikibase:language \"" + lang + "\". }" +
                 "}";
         try {
             //Encode the query to be used in an url
@@ -73,64 +73,31 @@ class DataHandler {
         }
         return null;
     }
-    
 
-    @Deprecated
-    static JSONObject convertJSON(JSONObject wikiData) {
-        JSONObject sparql = wikiData.getJSONObject("sparql");
-        JSONObject results = (JSONObject) sparql.get("results");
-        JSONArray bindings = (JSONArray) results.get("binding");
-        JSONObject newResultSet = (JSONObject) bindings.get(0);
+    static JSONObject convertJSON(JSONObject WikiData) {
+        JSONArray results = WikiData.getJSONObject("sparql").getJSONObject("results").getJSONObject("result").getJSONArray("binding");
+        JSONObject resultsObject = new JSONObject();
 
-
-        for (String key : newResultSet.toMap().keySet()) {
-            JSONObject item = newResultSet.getJSONObject(key);
-            String value = item.getString("value");
-
-
-            newResultSet.remove(key);
-            newResultSet.put(key, value);
-        }
-
-        wikiData.remove("results");
-        wikiData.put("results", newResultSet);
-
-        return wikiData;
-    }
-    
-    @Deprecated
-    private static JSONObject convert_the_JSON_to_SOMETHING_FUCKING_USEFUL(JSONObject wikiData) {
-        JSONArray oldHead = wikiData.getJSONObject("sparql").getJSONObject("head").getJSONArray("variable");
-        JSONArray newHead= new JSONArray();
-        
-        for (int i = 0; i < oldHead.length(); i++) {
-            String variable = oldHead.get(i).toString();
-            oldHead.remove(i);
-            newHead.put(variable);
-            Log.status("added "+variable+" to head");
-        }
-        wikiData.put("head", newHead);
-        Log.status(newHead.toString());
-        Log.success("Head completed");
-        
-        JSONArray results = wikiData.getJSONObject("sparql").getJSONObject("results").getJSONObject("result").getJSONArray("binding");
         for (int i = 0; i < results.length(); i++) {
-            JSONObject item = (JSONObject) results.get(i);
-            String variable = item.get("name").toString();
-            
-            
-            
-            if (item.has("literal")) {
-                JSONObject literalItem = item.getJSONObject("literal");
-                if (literalItem.has("content")) {
-                    literalItem.getString("content");
-                } else if (literalItem.has("uri")) {
-                
-                }
-                
+            JSONObject jsonObject = results.getJSONObject(i);
+
+            String key = jsonObject.getString("name");
+            String value;
+            if(jsonObject.has("literal")){
+                value = String.valueOf(jsonObject.getJSONObject("literal").get("content"));
+            }else{
+                value = jsonObject.getString("uri");
             }
-            
+            resultsObject.put(key, value);
         }
-        return null;
+
+
+        JSONObject returnObject = new JSONObject();
+        returnObject.put("head", WikiData.getJSONObject("sparql").getJSONObject("head").getJSONArray("variable"));
+        returnObject.put("results", resultsObject);
+
+
+
+        return returnObject;
     }
 }
