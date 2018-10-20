@@ -37,6 +37,8 @@ class DataHandler {
     static JSONObject queryCall(String query, String lang){
         //Get the entities id based on a query
         String entityId = queryToEntity(query, lang);
+
+        //Use a sparql query to access data from wikidata
         String queryAufruf = "SELECT ?Name ?EinwohnerZahl ?Landeswappen ?Karte ?Bild ?Koordinaten ?Flagge WHERE {" +
                 "  wd:" + entityId + " wdt:P1448 ?Name." +
                 "  OPTIONAL {wd:" + entityId + " wdt:P1082 ?EinwohnerZahl.}" +
@@ -50,9 +52,11 @@ class DataHandler {
                 "}" +
                 "";
         try {
-            String queryAufrufEncoded = URLEncoder.encode(queryAufruf, "UTF-8");
+            //Encode the query to be used in an url
+            String queryEncoded = URLEncoder.encode(queryAufruf, "UTF-8");
 
-            Scanner scanner = new Scanner(new URL("https://query.wikidata.org/sparql?query=" + queryAufrufEncoded).openStream());
+            //Declare the scanner to later get data from wikidata
+            Scanner scanner = new Scanner(new URL("https://query.wikidata.org/sparql?query=" + queryEncoded).openStream());
 
             //Get all the data to be stored in a StringBuilder
             StringBuilder stringBuilder = new StringBuilder();
@@ -60,10 +64,10 @@ class DataHandler {
                 stringBuilder.append(scanner.nextLine());
             }
             scanner.close();
+            //return the data as a JSONObject
             String s = stringBuilder.toString();
             return XML.toJSONObject(s);
 
-            //Return the data as a JSONObject
         } catch (IOException e) {
             e.printStackTrace();
         }
