@@ -1,13 +1,6 @@
 import org.json.JSONObject;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.io.StringReader;
 import java.net.URL;
 import java.util.Scanner;
 
@@ -16,22 +9,19 @@ public class DataHandler {
         return null;
     }
 
-    static String queryToEntity(String query) {
+    static String queryToEntity(String query, String lang) {
         try {
-            Scanner scanner = new Scanner(new URL("https://query.wikidata.org/sparql?query=" + query).openStream());
+            Scanner scanner = new Scanner(new URL("https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&search=" + query + "&language=" + lang).openStream());
             StringBuilder stringBuilder = new StringBuilder();
             while (scanner.hasNextLine()) {
                 stringBuilder.append(scanner.nextLine());
             }
             scanner.close();
 
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(new InputSource(new StringReader(stringBuilder.toString())));
+            JSONObject jsonObject = new JSONObject(stringBuilder.toString());
+            return jsonObject.getJSONArray("search").getJSONObject(0).getString("id");
 
-            return document.getElementsByTagName("uri").item(0).getTextContent().split("entity/")[1];
-
-        } catch (IOException | ParserConfigurationException | SAXException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
