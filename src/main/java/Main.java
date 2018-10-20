@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Objects;
 
 public class Main {
     private Main() {
@@ -33,6 +32,7 @@ public class Main {
         public void handle(HttpExchange exchange) throws IOException {
             HashMap<String, String> query = queryToMap(exchange.getRequestURI().getQuery());
 
+            Log.success("Received a request for a search");
             write(DataHandler.queryCall(query.get("searchword"), query.get("lang")).toString(), 200, exchange);
 
         }

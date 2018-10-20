@@ -1,4 +1,6 @@
+import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.XML;
 
 import java.io.IOException;
 import java.net.URL;
@@ -24,6 +26,7 @@ class DataHandler {
 
             //Convert the data to a JSONObject and return the entities id
             JSONObject jsonObject = new JSONObject(stringBuilder.toString()).getJSONArray("search").getJSONObject(0);
+            Log.success("Received the entities id");
             return jsonObject.getString("id");
 
         } catch (IOException e) {
@@ -48,9 +51,11 @@ class DataHandler {
                 "  SERVICE wikibase:label { bd:serviceParam wikibase:language \"[AUTO_LANGUAGE],en\". }\n" +
                 "}";
         try {
-            String queryAufrufEncoded = URLEncoder.encode(queryAufruf, "UTF-8");
+            //Encode the query to be used in an url
+            String queryEncoded = URLEncoder.encode(queryAufruf, "UTF-8");
 
-            Scanner scanner = new Scanner(new URL(queryAufrufEncoded).openStream());
+            //Declare the scanner to later get data from wikidata
+            Scanner scanner = new Scanner(new URL("https://query.wikidata.org/sparql?query=" + queryEncoded).openStream());
 
             //Get all the data to be stored in a StringBuilder
             StringBuilder stringBuilder = new StringBuilder();
@@ -58,7 +63,9 @@ class DataHandler {
                 stringBuilder.append(scanner.nextLine());
             }
             scanner.close();
-            JSONObject jsonObject = new JSONObject(stringBuilder.toString());
+            //return the data as a JSONObject
+            String s = stringBuilder.toString();
+            return XML.toJSONObject(s);
 
             //Return the data as a JSONObject
             return new JSONObject(stringBuilder.toString());
@@ -66,5 +73,26 @@ class DataHandler {
             e.printStackTrace();
         }
         return null;
+    }
+
+    static JSONObject convertJSON(JSONObject WikiData) {
+        JSONObject results = (JSONObject) WikiData.get("results");
+        JSONArray bindings = (JSONArray) results.get("bindings");
+        JSONObject newResultSet = (JSONObject) bindings.get(0);
+
+
+        for (String key : newResultSet.toMap().keySet()) {
+            JSONObject item = newResultSet.getJSONObject(key);
+            String value = item.getString("value");
+
+
+            newResultSet.remove(key);
+            newResultSet.put(key, value);
+        }
+
+        WikiData.remove("results");
+        WikiData.put("results", newResultSet);
+
+        return WikiData;
     }
 }
