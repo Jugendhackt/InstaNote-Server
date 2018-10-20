@@ -77,6 +77,7 @@ class DataHandler {
         return null;
     }
 
+    @Deprecated
     static JSONObject convertJSON(JSONObject wikiData) {
         JSONObject sparql = wikiData.getJSONObject("sparql");
         JSONObject results = (JSONObject) sparql.get("results");
