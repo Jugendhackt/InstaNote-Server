@@ -1,3 +1,4 @@
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
 
@@ -72,5 +73,26 @@ class DataHandler {
             e.printStackTrace();
         }
         return null;
+    }
+    
+    static JSONObject convertJSON(JSONObject WikiData) {
+        JSONObject results = (JSONObject) WikiData.get("results");
+        JSONArray bindings = (JSONArray) results.get("bindings");
+        JSONObject newResultSet = (JSONObject) bindings.get(0);
+        
+        
+        for (String key : newResultSet.toMap().keySet()) {
+            JSONObject item = newResultSet.getJSONObject(key);
+            String value = item.getString("value");
+            
+            
+            newResultSet.remove(key);
+            newResultSet.put(key, value);
+        }
+    
+        WikiData.remove("results");
+        WikiData.put("results", newResultSet);
+        
+        return WikiData;
     }
 }
