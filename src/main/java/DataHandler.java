@@ -89,21 +89,21 @@ class DataHandler {
 
             String key = jsonObject.getString("name");
             String value;
-            if(jsonObject.has("literal")){
+
+            if(jsonObject.has("literal")) {
                 value = String.valueOf(jsonObject.getJSONObject("literal").get("content"));
-            }else{
+            } else {
                 value = jsonObject.getString("uri");
             }
+
             resultsObject.put(key, value);
+            Log.status("added "+key);
         }
 
-
-        JSONObject returnObject = new JSONObject();
-        returnObject.put("head", WikiData.getJSONObject("sparql").getJSONObject("head").getJSONArray("variable"));
-        returnObject.put("results", resultsObject);
-
-
-
-        return returnObject;
+        JSONObject newWikiDataset = new JSONObject();
+        newWikiDataset.put("head", wikiData.getJSONObject("sparql").getJSONObject("head").getJSONArray("variable"));
+        newWikiDataset.put("results", resultsObject);
+				Log.success("formatting succesfull");
+        return newWikiDataset;
     }
 }

@@ -11,8 +11,7 @@ import java.util.LinkedHashMap;
 public class Main {
     private Main() {
         try {
-
-            HttpServer httpServer = HttpServer.create(new InetSocketAddress(2000), 0);
+            HttpServer httpServer = HttpServer.create(new InetSocketAddress(1337), 0);
 
             httpServer.createContext("/search", new searchHandler());
 
@@ -23,9 +22,9 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        Log.status("starting	http-server");
+        Log.status("starting http-server...");
         new Main();
-        Log.success("started		http-server");
+        Log.success("started http-server");
     }
 
     private class searchHandler implements HttpHandler {
@@ -34,8 +33,7 @@ public class Main {
             HashMap<String, String> query = queryToMap(exchange.getRequestURI().getQuery());
 
             Log.status("Received a request for a search");
-            write(DataHandler.convertJSON(DataHandler.queryCall(query.get("searchword"), query.get("lang"))).toString(), 200, exchange);
-
+            write(DataHandler.convertWikiData(DataHandler.queryCall(query.get("key"), query.get("lang"))).toString(), 200, exchange);
         }
     }
 
