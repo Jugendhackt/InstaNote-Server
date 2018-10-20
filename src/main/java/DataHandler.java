@@ -96,6 +96,8 @@ class DataHandler {
         returnObject.put("head", WikiData.getJSONObject("sparql").getJSONObject("head").getJSONArray("variable"));
         returnObject.put("results", resultsObject);
 
+        WikiData.remove("results");
+        WikiData.put("results", newResultSet);
 
         return returnObject;
     }
