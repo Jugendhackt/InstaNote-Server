@@ -76,6 +76,10 @@ class DataHandler {
         }
         return null;
     }
+    
+    private static JSONObject convert_the_JSON_to_SOMETHING_FUCKING_USEFUL(JSONObject wikiData) {
+        return null;
+    }
 
     @Deprecated
     static JSONObject convertJSON(JSONObject wikiData) {
