@@ -31,6 +31,9 @@ public class Main {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             HashMap<String, String> query = queryToMap(exchange.getRequestURI().getQuery());
+
+            write(DataHandler.queryToEntity(query.get("searchWord"), query.get("lang")).toString(), 200, exchange);
+
         }
     }
 
