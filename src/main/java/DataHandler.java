@@ -1,4 +1,5 @@
 import org.json.JSONObject;
+import org.json.XML;
 
 import java.io.IOException;
 import java.net.URL;
@@ -24,6 +25,7 @@ class DataHandler {
 
             //Convert the data to a JSONObject and return the entities id
             JSONObject jsonObject = new JSONObject(stringBuilder.toString()).getJSONArray("search").getJSONObject(0);
+            Log.success("Received the entities id");
             return jsonObject.getString("id");
 
         } catch (IOException e) {
@@ -50,7 +52,7 @@ class DataHandler {
         try {
             String queryAufrufEncoded = URLEncoder.encode(queryAufruf, "UTF-8");
 
-            Scanner scanner = new Scanner(new URL(queryAufrufEncoded).openStream());
+            Scanner scanner = new Scanner(new URL("https://query.wikidata.org/sparql?query=" + queryAufrufEncoded).openStream());
 
             //Get all the data to be stored in a StringBuilder
             StringBuilder stringBuilder = new StringBuilder();
@@ -58,10 +60,10 @@ class DataHandler {
                 stringBuilder.append(scanner.nextLine());
             }
             scanner.close();
-            JSONObject jsonObject = new JSONObject(stringBuilder.toString());
+            String s = stringBuilder.toString();
+            return XML.toJSONObject(s);
 
             //Return the data as a JSONObject
-            return new JSONObject(stringBuilder.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
