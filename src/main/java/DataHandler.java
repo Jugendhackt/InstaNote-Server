@@ -5,6 +5,7 @@ import org.json.XML;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 class DataHandler {
@@ -17,7 +18,7 @@ class DataHandler {
     private static String queryToEntity(String query, String lang) {
         try {
             //Get the data from the wikidata api using a search word and a language
-            Scanner scanner = new Scanner(new URL("https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&uselang=" + lang + "&search=" + query + "&language=" + lang).openStream());
+            Scanner scanner = new Scanner(new URL("https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&uselang=" + lang + "&search=" + query.replace(" ", "+") + "&language=" + lang).openStream());
             StringBuilder stringBuilder = new StringBuilder();
             while (scanner.hasNextLine()) {
                 stringBuilder.append(scanner.nextLine());
@@ -39,7 +40,7 @@ class DataHandler {
         //Get the entities id based on a query
         String entityId = queryToEntity(query, lang);
         String queryAufruf = "SELECT ?Name ?EinwohnerZahl ?Landeswappen ?Karte ?Bild ?Koordinaten ?Flagge ?description WHERE {\n" +
-                "  wd:"+entityId+" wdt:P1448 ?Name." +
+                "  wd:"+entityId+" wdt:P1705 ?Name." +
                 "  OPTIONAL { wd:"+entityId+" wdt:P1082 ?EinwohnerZahl. }" +
                 "  OPTIONAL { wd:"+entityId+" wdt:P94 ?Landeswappen. }" +
                 "  OPTIONAL { wd:"+entityId+" wdt:P242 ?Karte. }" +
@@ -52,8 +53,7 @@ class DataHandler {
                 "}";
         try {
             //Encode the query to be used in an url
-            String queryEncoded = URLEncoder.encode(queryAufruf, "UTF-8");
-
+            String queryEncoded = URLEncoder.encode(queryAufruf, StandardCharsets.UTF_8);
             //Declare the scanner to later get data from wikidata
             Scanner scanner = new Scanner(new URL("https://query.wikidata.org/sparql?query=" + queryEncoded).openStream());
 
