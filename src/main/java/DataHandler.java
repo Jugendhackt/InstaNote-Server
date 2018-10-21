@@ -38,7 +38,7 @@ class DataHandler {
     static JSONObject queryCall(String query, String lang){
         //Get the entities id based on a query
         String entityId = queryToEntity(query, lang);
-        String queryAufruf = "SELECT ?Name ?EinwohnerZahl ?Landeswappen ?Karte ?Bild ?Koordinaten ?Flagge ?description WHERE {\n" +
+        String queryAufruf = "SELECT ?Name ?EinwohnerZahl ?Landeswappen ?Karte ?Bild ?Koordinaten ?Flagge ?area ?description WHERE {\n" +
                 "  wd:"+entityId+" wdt:P1448 ?Name." +
                 "  OPTIONAL { wd:"+entityId+" wdt:P1082 ?EinwohnerZahl. }" +
                 "  OPTIONAL { wd:"+entityId+" wdt:P94 ?Landeswappen. }" +
@@ -46,6 +46,7 @@ class DataHandler {
                 "  OPTIONAL { wd:"+entityId+" wdt:P18 ?Bild. }" +
                 "  OPTIONAL { wd:"+entityId+" wdt:P625 ?Koordinaten. }" +
                 "  OPTIONAL { wd:"+entityId+" wdt:P41 ?Flagge. }" +
+                "  OPTIONAL { wd:"+entityId+" wdt:P2046 ?area }"+
                 "  OPTIONAL { wd:"+entityId+" schema:description ?description." +
                 "           FILTER(LANG(?description)=\"" + lang + "\")}" +
                 "  SERVICE wikibase:label { bd:serviceParam wikibase:language \"" + lang + "\". }" +
