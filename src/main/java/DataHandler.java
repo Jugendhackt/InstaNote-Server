@@ -47,7 +47,7 @@ class DataHandler {
                 "  OPTIONAL { wd:"+entityId+" wdt:P625 ?Koordinaten. }" +
                 "  OPTIONAL { wd:"+entityId+" wdt:P41 ?Flagge. }" +
                 "  OPTIONAL { wd:"+entityId+" schema:description ?description." +
-                "           FILTER(LANG(?description)=\"de\")}" +
+                "           FILTER(LANG(?description)=\"" + lang + "\")}" +
                 "  SERVICE wikibase:label { bd:serviceParam wikibase:language \"" + lang + "\". }" +
                 "}";
         try {
@@ -74,7 +74,7 @@ class DataHandler {
         return null;
     }
 
-    static JSONObject convertJSON(JSONObject wikiData) {
+    static JSONObject convertWikiData(JSONObject wikiData) {
         JSONObject result = wikiData.getJSONObject("sparql").getJSONObject("results");
         JSONObject resultObject = result.optJSONObject("result");
         if(resultObject == null){
