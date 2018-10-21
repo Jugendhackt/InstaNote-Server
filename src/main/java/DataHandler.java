@@ -39,14 +39,15 @@ class DataHandler {
     static JSONObject queryCall(String query, String lang){
         //Get the entities id based on a query
         String entityId = queryToEntity(query, lang);
-        String queryAufruf = "SELECT ?Name ?EinwohnerZahl ?Landeswappen ?Karte ?Bild ?Koordinaten ?Flagge ?description WHERE {\n" +
-                "  wd:"+entityId+" wdt:P1705 ?Name." +
-                "  OPTIONAL { wd:"+entityId+" wdt:P1082 ?EinwohnerZahl. }" +
-                "  OPTIONAL { wd:"+entityId+" wdt:P94 ?Landeswappen. }" +
-                "  OPTIONAL { wd:"+entityId+" wdt:P242 ?Karte. }" +
-                "  OPTIONAL { wd:"+entityId+" wdt:P18 ?Bild. }" +
-                "  OPTIONAL { wd:"+entityId+" wdt:P625 ?Koordinaten. }" +
-                "  OPTIONAL { wd:"+entityId+" wdt:P41 ?Flagge. }" +
+        String queryAufruf = "SELECT ?name ?inhabitants ?codeOfArms ?map ?picture ?coordinates ?flag ?area ?description WHERE {\n" +
+                "  wd:"+entityId+" wdt:P1705 ?name." +
+                "  OPTIONAL { wd:"+entityId+" wdt:P1082 ?inhabitants. }" +
+                "  OPTIONAL { wd:"+entityId+" wdt:P94 ?codeOfArms. }" +
+                "  OPTIONAL { wd:"+entityId+" wdt:P242 ?map. }" +
+                "  OPTIONAL { wd:"+entityId+" wdt:P18 ?picture. }" +
+                "  OPTIONAL { wd:"+entityId+" wdt:P625 ?coordinates. }" +
+                "  OPTIONAL { wd:"+entityId+" wdt:P41 ?flag. }" +
+                "  OPTIONAL { wd:"+entityId+" wdt:P2046 ?area }"+
                 "  OPTIONAL { wd:"+entityId+" schema:description ?description." +
                 "           FILTER(LANG(?description)=\"" + lang + "\")}" +
                 "  SERVICE wikibase:label { bd:serviceParam wikibase:language \"" + lang + "\". }" +
