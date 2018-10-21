@@ -74,7 +74,7 @@ class DataHandler {
         return null;
     }
 
-    static JSONObject convertJSON(JSONObject wikiData) {
+    static JSONObject convertWikiData(JSONObject wikiData) {
         JSONObject result = wikiData.getJSONObject("sparql").getJSONObject("results");
         JSONObject resultObject = result.optJSONObject("result");
         if(resultObject == null){
