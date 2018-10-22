@@ -40,7 +40,7 @@ class DataHandler {
         //Get the entities id based on a query
         String entityId = queryToEntity(query, lang);
         String queryAufruf = "SELECT ?name ?inhabitants ?codeOfArms ?map ?picture ?coordinates ?flag ?area ?description WHERE {\n" +
-                "  wd:"+entityId+" wdt:P1705 ?name." +
+                "  wd:"+entityId+" rdfs:label ?name." +
                 "  OPTIONAL { wd:"+entityId+" wdt:P1082 ?inhabitants. }" +
                 "  OPTIONAL { wd:"+entityId+" wdt:P94 ?codeOfArms. }" +
                 "  OPTIONAL { wd:"+entityId+" wdt:P242 ?map. }" +
