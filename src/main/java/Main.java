@@ -12,9 +12,7 @@ public class Main {
     private Main() {
         try {
             HttpServer httpServer = HttpServer.create(new InetSocketAddress(1337), 0);
-
             httpServer.createContext("/search", new searchHandler());
-
             httpServer.start();
         } catch (IOException e) {
             e.printStackTrace();
@@ -26,17 +24,38 @@ public class Main {
         new Main();
         Log.success("started http-server");
     }
-
+    
+    
     private class searchHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             HashMap<String, String> query = queryToMap(exchange.getRequestURI().getQuery());
-
-            Log.status("Received a request for a search");
-            write(DataHandler.convertWikiData(DataHandler.queryCall(query.get("key"), query.get("lang"))).toString(), 200, exchange);
+    
+            String keyword = query.get("key");
+            String language = query.get("lang");
+            
+            Log.warning("+++++ Received a request for "+keyword.toUpperCase()+" +++++");
+            if (keyword == null || keyword.toLowerCase().contentEquals("null")) {
+                Log.critical("No ID found".toUpperCase());
+                Log.status("Aborted request.");
+                write("{\"error\": 400}", 400, exchange);
+            } else {
+                try {
+                    String presentationData = DataHandler.getPresentationData(keyword, language);
+                    if (presentationData != null) {
+                        write(presentationData, 200, exchange);
+                        Log.success("+++++ "+keyword.toUpperCase()+" request handeled +++++".toUpperCase() );
+                    } else {
+                        Log.critical("Missing Data".toUpperCase());
+                        write("{\"error\": 400}", 400, exchange);
+                        Log.status("Aborted request.");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
-
 
     private HashMap<String, String> queryToMap(String query) {
         LinkedHashMap<String, String> result = new LinkedHashMap<>();
@@ -47,7 +66,6 @@ public class Main {
         }
         return result;
     }
-
 
     private void write(String text, int rCode, HttpExchange exchange) throws IOException {
         Headers responseHeaders = exchange.getResponseHeaders();
