@@ -6,7 +6,7 @@
 
   <groupId>org.jugendhackt.instanote</groupId>
   <artifactId>InstaNote-Server</artifactId>
-  <version>DEV</version>
+  <version>hamburg</version>
 
   <dependencies>
 
